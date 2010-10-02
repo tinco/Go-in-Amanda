@@ -1,6 +1,6 @@
 || Het Go bord
 
-bord_size = 19
+bord_size = 3
 posStateTp == spelerTp
 positionTp == (num, num)
 goBordTp == [[posStateTp]]
@@ -27,7 +27,7 @@ neighbours bord (x,y)
     buurposities = links ++ rechts ++ boven ++ onder
     
 posLiberties bord position
-  = #[ p | p <- (neighbours bord position) ; getPosition bord p = None]
+  = [ p | p <- (neighbours bord position) ; getPosition bord p = None]
     
 group bord positie
   = h_groep bord [] [positie]
@@ -44,3 +44,11 @@ h_groep bord collected fringe
                     (concat (map (neighbours bord) fringe))
                   )
                  ) -- collected
+
+groupLiberties bord group
+  = unique (concat (map (posLiberties bord) group))
+      
+ex_group = [[Black, Black, Black] ,
+            [Black, None,  Black] ,
+            [Black, Black, None ] ]
+            
