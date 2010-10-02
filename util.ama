@@ -1,3 +1,7 @@
 || Utiltity functions:
 
+||Makes an array by repeating a value n times.
 repeat n a = take n (iterate (x->x) a)
+
+|| Updates an array by setting the n-th value to a
+update array n a = (take n array) ++ [a] ++ (drop (n+1) array)

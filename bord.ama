@@ -4,5 +4,13 @@ bord_size = 19
 posStateTp == spelerTp
 positionTp == (num, num)
 goBordTp == [[posStateTp]]
+
   
 newBord = (repeat bord_size (repeat bord_size None))
+
+
+getPosition bord (x, y)
+  = ((bord ! x) ! y)
+    
+setPosition bord state (x, y)
+  = update bord x (update (bord ! x) y state)
