@@ -5,3 +5,14 @@ repeat n a = take n (iterate (x->x) a)
 
 || Updates an array by setting the n-th value to a
 update array n a = (take n array) ++ [a] ++ (drop (n+1) array)
+  
+|| Jeej, O(n) insert omdat we language features missen.
+|| Garandeert alleen uniekheid als (x:xs) al uniek is.
+unique_append [] y = [y]
+unique_append (x:xs) y
+  = x : xs , if x=y
+  = x : (unique_append xs y) , if x ~= y
+
+|| Wiieee    
+unique array
+  = foldl unique_append [] array

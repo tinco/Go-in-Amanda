@@ -14,7 +14,7 @@ setPosition bord state (x, y)
   = update bord x (update (bord ! x) y state)
 
 neighbours bord (x,y)
-  = map (getPosition bord) buurposities
+  = buurposities
   where
     links  = [(x-1, y)] , if x > 0
            = [] , otherwise
@@ -27,4 +27,20 @@ neighbours bord (x,y)
     buurposities = links ++ rechts ++ boven ++ onder
     
 posLiberties bord position
-  = #[ p | p <- (neighbours bord position) ; p = None]
+  = #[ p | p <- (neighbours bord position) ; getPosition bord p = None]
+    
+group bord positie
+  = h_groep bord [] [positie]
+
+h_groep bord collected fringe
+  = h_groep bord new_collected new_fringe, if new_fringe ~= []
+  = new_collected , otherwise
+  where
+    kleur = getPosition bord (hd fringe)
+    new_collected = collected ++ fringe
+    new_fringe = (unique 
+                  ( filter
+                    (x-> getPosition bord x = kleur)  
+                    (concat (map (neighbours bord) fringe))
+                  )
+                 ) -- collected
