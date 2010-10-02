@@ -1,3 +1,6 @@
+#import "util.ama"
+#import "bord.ama"
+
 || Run go
 
 || Statemachine die door de fases van het spel gaat:
@@ -14,7 +17,6 @@
 || Eind -> (bevestig) -> Begin
 
 || Komi
-bord_size = 19
 komi = 6.5
 
 || Regels: http://en.wikipedia.org/wiki/Rules_of_Go
@@ -25,10 +27,8 @@ komi = 6.5
 gameStateTp ::= Begin | Turn | Score | Eind
 
 spelerTp  ::= Black | White | None
-posStateTp == spelerTp
 winnaarTp == spelerTp
 	
-goBordTp == [[posStateTp]]
 scoreTp == (num, num)
 	
 gameTp ::= { bord :: goBordTp ,
@@ -46,6 +46,3 @@ newGameState = { bord = newBord ,
                  pas = 0 ,
                  score = (0, komi) ,
                  winnaar = None }
-
-repeat n a = take n (iterate (x->x) a)
-newBord = (repeat bord_size (repeat bord_size None))

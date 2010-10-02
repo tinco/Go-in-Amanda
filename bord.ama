@@ -1,0 +1,8 @@
+|| Het Go bord
+
+bord_size = 19
+posStateTp == spelerTp
+positionTp == (num, num)
+goBordTp == [[posStateTp]]
+  
+newBord = (repeat bord_size (repeat bord_size None))

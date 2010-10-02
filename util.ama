@@ -1,0 +1,3 @@
+|| Utiltity functions:
+
+repeat n a = take n (iterate (x->x) a)
