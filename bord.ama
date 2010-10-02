@@ -4,13 +4,27 @@ bord_size = 19
 posStateTp == spelerTp
 positionTp == (num, num)
 goBordTp == [[posStateTp]]
-
   
 newBord = (repeat bord_size (repeat bord_size None))
-
 
 getPosition bord (x, y)
   = ((bord ! x) ! y)
     
 setPosition bord state (x, y)
   = update bord x (update (bord ! x) y state)
+
+neighbours bord (x,y)
+  = map (getPosition bord) buurposities
+  where
+    links  = [(x-1, y)] , if x > 0
+           = [] , otherwise
+    rechts = [(x+1, y)] , if x < (bord_size - 1)
+           = [] , otherwise
+    boven  = [(x,y+1)] , if y < (bord_size - 1)
+           = [] , otherwise
+    onder  = [(x, y-1)] , if y > 0
+           = [] , otherwise
+    buurposities = links ++ rechts ++ boven ++ onder
+    
+posLiberties bord position
+  = #[ p | p <- (neighbours bord position) ; p = None]
