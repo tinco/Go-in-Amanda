@@ -1,48 +1,13 @@
+#import "game.ama"
 #import "util.ama"
 #import "bord.ama"
 
 || Run go
 
-|| Statemachine die door de fases van het spel gaat:
-
-|| Main Flow:
-|| Begin -> (bevestig) -> Turn *
-|| Turn * -> (maakt move) -> Turn **
-|| Turn * -> (maakt ongeldige move) **
-|| Turn * -> (past (1e pas)) -> Turn **
-|| Turn * -> (past (2e pas)) -> Score
-|| Turn * -> (resign) -> Eind(**)
-|| Score -> (markeer dode groep (groepen over)) -> Score
-|| Score -> (markeer dode groep (geen groep over)) -> Eind(*)
-|| Eind -> (bevestig) -> Begin
-
 || Komi
 komi = 6.5
-
-|| Regels: http://en.wikipedia.org/wiki/Rules_of_Go
-|| Extra regels:
-|| Suicide is verboden
-|| Geen 
-
-gameStateTp ::= Begin | Turn | Score | Eind
 
 spelerTp  ::= Black | White | None
 winnaarTp == spelerTp
 	
 scoreTp == (num, num)
-	
-gameTp ::= { bord :: goBordTp ,
-             history :: [goBordTp] ,
-             state :: gameStateTp ,
-             speler :: spelerTp ,
-             pas :: num ,
-             score :: scoreTp,
-             winnaar :: winnaarTp }
-
-newGameState = { bord = newBord ,
-                 history = [] ,
-                 state = Begin ,
-                 speler = Black ,
-                 pas = 0 ,
-                 score = (0, komi) ,
-                 winnaar = None }
