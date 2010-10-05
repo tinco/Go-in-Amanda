@@ -7,7 +7,7 @@ tekenBord bord = graphicsout(background : goban : lijnen ++ stenen ++ (doEvents 
     goban_s = goban_spacing bord_size
     goban = GraphRectangle lightgrey (hd goban_s, hd goban_s) (last goban_s, last goban_s)
     lijnen = map (l->GraphPolyLine black l) (lineCoords bord_size)
-    stenen = []
+    stenen = map (((x, y), k)->GraphDisc (spelerKleur k) x y) (stoneCoords bord)
       
 lineCoords n
   = verts ++ horizs
@@ -20,6 +20,20 @@ lineCoords n
     horiz_ends = zip (repeat n (last spacing), spacing)
     horizs = zipwith (toline) horiz_begins horiz_ends
       
+stoneCoords bord
+  = stenen
+  where
+    bord_size = #bord
+    spacing = bord_spacing bord_size
+    || Dit is redelijk sexy:
+    positions = concat (zipwith (rij->space_x->
+                 (zipwith (steen->space_y->
+                   (discPosition bord_size (space_x, space_y), steen)
+                  ) rij (reverse spacing) ) || Spiegelen in de y-as
+                ) bord spacing )
+    stenen = filter ((_,c)-> c ~= None) positions
+    
+      
 || Om de punten van het bord is 1 space ruimte voor de stenen
 || en 1 space ruimte voor de rand van het bord
 game_spacing bord_size = (spread (-1) 1 (bord_size+4))
@@ -28,7 +42,17 @@ bord_spacing bord_size = sublist (goban_spacing bord_size) 1 bord_size
 
 
 toline b e = [b, e]
-
+  
+spelerKleur White = white
+spelerKleur Black = black
+  
+discPosition bord_size (x,y) 
+  = ((x - stone_radius, y - stone_radius), (x + stone_radius, y + stone_radius))
+  where
+    spacing = bord_spacing bord_size
+    stone_radius1 = ((foldl1 (minus) (reverse (take 2 spacing))) // 2)
+    stone_radius = stone_radius1 * (15//16) || verkleiningsfactor (weghalen als plaatjes?)
+    
 doEvents (e : es) 
   = doEvents es 
     

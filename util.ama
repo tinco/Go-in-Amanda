@@ -25,6 +25,9 @@ unique_append (x:xs) y
 || This has a very bad complexity.    
 unique list
   = foldl unique_append [] list
+    
+|| substracts a from b
+minus a b = a - b
         
 || Spread divides a range (b-e) into n points with equal spacing.
 spread b e n = take n (iterate (+((e-b)//(n-1))) (-1))
