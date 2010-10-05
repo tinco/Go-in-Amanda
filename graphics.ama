@@ -1,27 +1,52 @@
 || Graphics
 
-tekenBord bord = graphicsout(goban : lijnen ++ stenen ++ (doEvents eventsin)) 
+tekenBord bord = graphicsout(background : goban : lijnen ++ stenen ++ (doEvents eventsin)) 
   where
     bord_size = #bord
-    goban = GraphRectangle 14 ((-1),(-1)) (1,1) 
-    lijnen = map (l->GraphPolyLine 0 l) (lineCoords bord_size)
+    background = GraphRectangle darkgrey ((-1),(-1)) (1,1)
+    goban_s = goban_spacing bord_size
+    goban = GraphRectangle lightgrey (hd goban_s, hd goban_s) (last goban_s, last goban_s)
+    lijnen = map (l->GraphPolyLine black l) (lineCoords bord_size)
     stenen = []
       
 lineCoords n
   = verts ++ horizs
   where    
-    spacing = sublist (spread (-1) 1 (n+2)) 1 n
+    spacing = bord_spacing n
     vert_begins = zip (spacing, repeat n (hd spacing))
     vert_ends = zip (spacing, repeat n (last spacing))
     verts = zipwith (toline) vert_begins vert_ends
     horiz_begins = zip (repeat n (hd spacing), spacing)
     horiz_ends = zip (repeat n (last spacing), spacing)
     horizs = zipwith (toline) horiz_begins horiz_ends
+      
+|| Om de punten van het bord is 1 space ruimte voor de stenen
+|| en 1 space ruimte voor de rand van het bord
+game_spacing bord_size = (spread (-1) 1 (bord_size+4))
+goban_spacing bord_size = sublist (game_spacing bord_size) 1 (bord_size + 2)
+bord_spacing bord_size = sublist (goban_spacing bord_size) 1 bord_size
+
 
 toline b e = [b, e]
-  
-black = 0 
-white = 15 
 
 doEvents (e : es) 
   = doEvents es 
+    
+||============= constants =====================================
+
+black       =  0
+darkblue    =  1
+darkgreen   =  2
+greyblue    =  3
+darkred     =  4
+purple      =  5
+mudgreen    =  6
+lightgrey   =  7
+darkgrey    =  8
+blue        =  9
+lightgreen  = 10
+lightblue   = 11
+red         = 12
+lightpurple = 13
+yellow      = 14
+white       = 15
