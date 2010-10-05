@@ -1,13 +1,31 @@
 #import "game.ama"
 #import "util.ama"
 #import "bord.ama"
-
-|| Run go
+#import "graphics.ama"
 
 || Komi
 komi = 6.5
 
 spelerTp  ::= Black | White | None
 winnaarTp == spelerTp
-	
 scoreTp == (num, num)
+  
+|| gameStateTp zou eigenlijk een goStateTp moeten zijn waar de graphics/io
+|| ook bij in zit zodat executeTurn daadwerkelijk moves kan afluisteren.
+
+gameTp ::= { bord :: goBordTp ,
+             history :: [goBordTp] ,
+             speler :: spelerTp ,
+             score :: scoreTp,
+             winnaar :: winnaarTp }
+
+newGameState = { bord = newBord ,
+                 history = [] ,
+                 speler = Black ,
+                 score = (0, komi) ,
+                 winnaar = None }
+
+|| Run go
+main = tekenBord bord
+  where
+    bord = ex_group

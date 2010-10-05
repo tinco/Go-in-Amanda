@@ -1,0 +1,27 @@
+|| Graphics
+
+tekenBord bord = graphicsout(goban : lijnen ++ stenen ++ (doEvents eventsin)) 
+  where
+    bord_size = #bord
+    goban = GraphRectangle 14 ((-1),(-1)) (1,1) 
+    lijnen = map (l->GraphPolyLine 0 l) (lineCoords bord_size)
+    stenen = []
+      
+lineCoords n
+  = verts ++ horizs
+  where    
+    spacing = sublist (spread (-1) 1 (n+2)) 1 n
+    vert_begins = zip (spacing, repeat n (hd spacing))
+    vert_ends = zip (spacing, repeat n (last spacing))
+    verts = zipwith (toline) vert_begins vert_ends
+    horiz_begins = zip (repeat n (hd spacing), spacing)
+    horiz_ends = zip (repeat n (last spacing), spacing)
+    horizs = zipwith (toline) horiz_begins horiz_ends
+
+toline b e = [b, e]
+  
+black = 0 
+white = 15 
+
+doEvents (e : es) 
+  = doEvents es 

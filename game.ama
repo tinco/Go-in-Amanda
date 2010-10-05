@@ -29,21 +29,6 @@ gameFSA (Turn game) action = (newState, newAction)
                                      = Turn newGame, otherwise
 gameFSA (Score game) Pass = (Eind (executeScore game), Mark)
 gameFSA (Eind game) action = (Begin newGameState, Affirm)
-  
-|| gameStateTp zou eigenlijk een goStateTp moeten zijn waar de graphics/io
-|| ook bij in zit zodat executeTurn daadwerkelijk moves kan afluisteren.
-  
-gameTp ::= { bord :: goBordTp ,
-             history :: [goBordTp] ,
-             speler :: spelerTp ,
-             score :: scoreTp,
-             winnaar :: winnaarTp }
-
-newGameState = { bord = newBord ,
-                 history = [] ,
-                 speler = Black ,
-                 score = (0, komi) ,
-                 winnaar = None }
                   
 nextPlayer White = Black
 nextPlayer Black = White
