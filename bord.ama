@@ -7,12 +7,15 @@ goBordTp == [[posStateTp]]
   
 newBord = (repeat bord_size (repeat bord_size None))
 
+getPosition :: goBordTp -> (num, num) -> posStateTp
 getPosition bord (x, y)
   = ((bord ! x) ! y)
-    
+
+setPosition :: goBordTp -> posStateTp -> (num, num) -> goBordTp
 setPosition bord state (x, y)
   = update bord x (update (bord ! x) y state)
 
+neighbours :: goBordTp -> (num, num) -> [(num, num)]
 neighbours bord (x,y)
   = buurposities
   where
@@ -26,12 +29,15 @@ neighbours bord (x,y)
            = [] , otherwise
     buurposities = links ++ rechts ++ boven ++ onder
     
+posLiberties :: goBordTp -> positionTp -> [positionTp]
 posLiberties bord position
   = [ p | p <- (neighbours bord position) ; getPosition bord p = None]
     
+group :: goBordTp -> positieTp -> [positieTp]
 group bord positie
   = h_groep bord [] [positie]
 
+h_groep :: goBordTp -> [positieTp] -> [positieTp] -> [positieTp]
 h_groep bord collected fringe
   = h_groep bord new_collected new_fringe, if new_fringe ~= []
   = new_collected , otherwise
@@ -45,6 +51,7 @@ h_groep bord collected fringe
                   )
                  ) -- collected
 
+groupLiberties :: goBordTp -> [positionTp] -> [positionTp]
 groupLiberties bord group
   = unique (concat (map (posLiberties bord) group))
       
