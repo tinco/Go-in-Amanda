@@ -20,7 +20,7 @@ gameStateTp ::= Begin gameTp | Turn gameTp | Score gameTp | Eind gameTp
 actionTp ::= Affirm | Move | Pass | Resign | Mark | InvalidMove | Nothing
   
 || gameFSA ::= gameStateTp -> actionTp -> gameStateTp
-gameFSA (Begin game) Affirm = (Turn (game & {speler=Black}), Nothing)
+gameFSA (Begin game) Affirm = (Turn (executeBegin), Nothing)
 gameFSA (Turn game) action = (newState, newAction)
                          where
                             (newGame, newAction) = executeTurn game
@@ -28,10 +28,12 @@ gameFSA (Turn game) action = (newState, newAction)
                                      = Eind newGame , if action = Resign
                                      = Turn newGame, otherwise
 gameFSA (Score game) Pass = (Eind (executeScore game), Mark)
-gameFSA (Eind game) action = (Begin newGameState, Affirm)
+gameFSA (Eind game) action = (Begin (executeEind game), Affirm)
                   
 nextPlayer White = Black
 nextPlayer Black = White
                           
 executeTurn game = (game, Move)
 executeScore game = game
+executeBegin = newGameState 6.5 19
+executeEind game = game

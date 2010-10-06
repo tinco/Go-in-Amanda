@@ -3,9 +3,6 @@
 #import "bord.ama"
 #import "graphics.ama"
 
-|| Komi
-komi = 6.5
-
 spelerTp  ::= Black | White | None
 winnaarTp == spelerTp
 scoreTp == (num, num)
@@ -19,7 +16,8 @@ gameTp ::= { bord :: goBordTp ,
              score :: scoreTp,
              winnaar :: winnaarTp }
 
-newGameState = { bord = newBord ,
+newGameState komi bord_size
+ =             { bord = (newBord bord_size),
                  history = [] ,
                  speler = Black ,
                  score = (0, komi) ,

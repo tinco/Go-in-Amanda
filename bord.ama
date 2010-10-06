@@ -1,11 +1,10 @@
 || Het Go bord
 
-bord_size = 3
 posStateTp == spelerTp
 positionTp == (num, num)
 goBordTp == [[posStateTp]]
   
-newBord = (repeat bord_size (repeat bord_size None))
+newBord bord_size = (repeat bord_size (repeat bord_size None))
 
 getPosition :: goBordTp -> positionTp -> posStateTp
 getPosition bord (x, y)
@@ -19,6 +18,7 @@ neighbours :: goBordTp -> positionTp -> [positionTp]
 neighbours bord (x,y)
   = buurposities
   where
+    bord_size = #bord
     links  = [(x-1, y)] , if x > 0
            = [] , otherwise
     rechts = [(x+1, y)] , if x < (bord_size - 1)
