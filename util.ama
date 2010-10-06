@@ -1,33 +1,42 @@
 || Utiltity functions:
 
-||Makes a list by repeating a value n times.
+||Makes a list by repeating a value n time
+repeat :: num -> * -> [*]
 repeat n a = take n (iterate (x->x) a)
 
 || Updates a list by setting the n-th value to a
+update :: [*] -> num -> * -> [*]
 update list n a = (take n list) ++ [a] ++ (drop (n+1) list)
   
 || Counterpart of tail, takes all but the last item from a list
+init :: [*] -> [*]
 init list = take (#list -1) list
+
 || Counterpart of head, takes the last item from a list
+last :: [*] -> *
 last list = hd (drop (#list -1) list)
   
 || Returns n items from the begin'th item from the list
+sublist :: [*] -> num -> num -> [*]
 sublist list begin n = take n (drop begin list)
   
 || Jeej, O(n) insert omdat we language features missen.
 || Garandeert alleen uniekheid als (x:xs) al uniek is.
+unique_append :: [*] -> * -> [*]
 unique_append [] y = [y]
 unique_append (x:xs) y
   = x : xs , if x=y
   = x : (unique_append xs y) , if x ~= y
 
 || Turns a list into a list with unique values.
-|| This has a very bad complexity.    
-unique list
-  = foldl unique_append [] list
+|| This has a very bad complexity.
+unique :: [*] -> [*]
+unique list = foldl unique_append [] list
     
 || substracts a from b
+minus :: num -> num -> num
 minus a b = a - b
         
 || Spread divides a range (b-e) into n points with equal spacing.
+spread :: num -> num -> num -> [num]
 spread b e n = take n (iterate (+((e-b)//(n-1))) (-1))
