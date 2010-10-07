@@ -1,5 +1,8 @@
 || Graphics
+posTp == (num, num)
 
+|| Geeft de graphics objecten voor het gegeven bord terug.  
+tekenBord :: goBordTp -> [(graphics)]
 tekenBord bord = background : goban : lijnen ++ stenen
   where
     bord_size = #bord
@@ -8,7 +11,9 @@ tekenBord bord = background : goban : lijnen ++ stenen
     goban = GraphRectangle lightgrey (hd goban_s, hd goban_s) (last goban_s, last goban_s)
     lijnen = map (l->GraphPolyLine black l) (lineCoords bord_size)
     stenen = map (((x, y), k)->GraphDisc (spelerKleur k) x y) (stoneCoords bord)
-      
+
+|| Geeft de posities van de lijnen op het bord.
+lineCoords :: num -> [[posTp]]
 lineCoords n
   = verts ++ horizs
   where    
@@ -19,7 +24,9 @@ lineCoords n
     horiz_begins = zip (repeat n (hd spacing), spacing)
     horiz_ends = zip (repeat n (last spacing), spacing)
     horizs = zipwith (toline) horiz_begins horiz_ends
-      
+
+|| Geeft de posities voor de stenen. Op het bord. 
+stoneCoords :: goBordTp -> [((posTp,posTp),spelerTp)]      
 stoneCoords bord
   = stenen
   where
@@ -36,16 +43,27 @@ stoneCoords bord
       
 || Om de punten van het bord is 1 space ruimte voor de stenen
 || en 1 space ruimte voor de rand van het bord
+|| Deze functies geven arrays met daarin de verdeling van het bord
+|| over de range -1 tot 1 voor gebruik in de graphics functies
+game_spacing :: num -> [num]
 game_spacing bord_size = (spread (-1) 1 (bord_size+4))
+goban_spacing :: num -> [num]
 goban_spacing bord_size = sublist (game_spacing bord_size) 1 (bord_size + 2)
+bord_spacing :: num -> [num]
 bord_spacing bord_size = sublist (goban_spacing bord_size) 1 bord_size
 
-
+|| Maakt van 2 posities een array voor PolyLine
+toline :: posTp -> posTp -> [posTp]
 toline b e = [b, e]
-  
+
+|| Converteert een spelerkleur naar de corresponderende graphics kleur
+spelerKleur :: spelerTp -> num
 spelerKleur White = white
 spelerKleur Black = black
-  
+
+|| Geeft de positie informatie voor een steen terug gebaseerd
+|| op de spacing die het huidige bord gebruikt en de positie.
+discPosition :: num -> posTp -> (posTp, posTp)  
 discPosition bord_size (x,y) 
   = ((x - stone_radius, y - stone_radius), (x + stone_radius, y + stone_radius))
   where
