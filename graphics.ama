@@ -1,6 +1,6 @@
 || Graphics
 
-tekenBord bord = graphicsout(background : goban : lijnen ++ stenen ++ (doEvents eventsin)) 
+tekenBord bord = background : goban : lijnen ++ stenen
   where
     bord_size = #bord
     background = GraphRectangle darkgrey ((-1),(-1)) (1,1)
@@ -52,9 +52,6 @@ discPosition bord_size (x,y)
     spacing = bord_spacing bord_size
     stone_radius1 = ((foldl1 (minus) (reverse (take 2 spacing))) // 2)
     stone_radius = stone_radius1 * (15//16) || verkleiningsfactor (weghalen als plaatjes?)
-    
-doEvents (e : es) 
-  = doEvents es 
     
 ||============= constants =====================================
 
