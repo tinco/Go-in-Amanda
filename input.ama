@@ -1,0 +1,19 @@
+|| Input
+
+handleInput gameTp (MouseUp(x,y) : es) ||Turn
+  = ||(x//een-1, y//een-1) : 
+    handleInput gameTp es
+  where
+    {bord=bord}=gameTp
+    een = 2//(#bord) || Het tekenscherm is altijd 2 breed (van -1 tot 1)
+
+handleInput gameTp (KeyIn 'p' : es) ||Pass
+  = handleInput gameTp es || Ook nog beurt naar de volgende
+
+|| Functies voor het functioneren van de app. Deze moeten altijd als laatste.
+
+handleInput gameTp (KeyIn '\e' : es) = [] || Stop.
+
+handleInput gameTp (KeyIn e : es) = handleInput gameTp es || Handel alle overige inputevents af door er niks mee te doen en verder te gaan met de volgende.
+
+

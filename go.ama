@@ -2,6 +2,7 @@
 #import "util.ama"
 #import "bord.ama"
 #import "graphics.ama"
+#import "input.ama"
 
 spelerTp  ::= Black | White | None
 winnaarTp == spelerTp
@@ -24,6 +25,6 @@ newGameState komi bord_size
                  winnaar = None }
 
 || Run go
-main = tekenBord bord
+main = graphicsout (handleInput (newGameState 0 19) eventsin)
   where
     bord = ex_group
