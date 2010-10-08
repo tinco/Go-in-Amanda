@@ -6,14 +6,14 @@ handleInput game (KeyIn 'n' : es) || New game
     {bord=bord}=game
 
 handleInput game (MouseUp(x,y) : es) ||Turn
-  = (tekenBord newBord) ++ handleInput game es
+  = (tekenBord new_bord) ++ handleInput new_game es
   where
     {bord=bord}=game
     on_stone = onStone bord (x,y)
     Just (position) = on_stone
-    newBord = setPosition bord White position , if on_stone ~= Nothing
-            = bord , otherwise 
-    new_game_state = game & {bord=newBord}
+    new_bord = setPosition bord White position , if on_stone ~= Nothing
+             = bord , otherwise 
+    new_game = game & {bord=new_bord}
 
 handleInput gameTp (KeyIn 'p' : es) ||Pass
   = handleInput gameTp es || Ook nog beurt naar de volgende

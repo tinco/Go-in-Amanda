@@ -52,7 +52,7 @@ goban_spacing bord_size = sublist (game_spacing bord_size) 1 (bord_size + 2)
 bord_spacing :: num -> [num]
 bord_spacing bord_size = sublist (goban_spacing bord_size) 1 bord_size
 game_space :: num -> num
-game_space bord_size = 2 // bord_size
+game_space bord_size = 2 // (bord_size + 4)
 
 || Maakt van 2 posities een array voor PolyLine
 toline :: posTp -> posTp -> [posTp]
@@ -70,10 +70,13 @@ discPosition bord_size (x,y)
   = ((x - stone_radius, y - stone_radius), (x + stone_radius, y + stone_radius))
   where
     stone_radius = stoneRadius bord_size
-      
+
+|| Retourneert de radius van een steen gegeven de bord_size
+stoneRadius :: num -> num
 stoneRadius bord_size
   = ((game_space bord_size) // 2 ) * (15//16)
       
+|| Retourneert de bordpositie voor een graphics positie als die positie op het bord is.
 onStone :: goBordTp -> posTp -> maybe posTp
 onStone bord (x,y)
   = Just (pos_x, pos_y) , if on_bord x /\ on_bord y
@@ -81,10 +84,24 @@ onStone bord (x,y)
     where
       bord_size = #bord
       spacing = bord_spacing bord_size
-      stone_radius  = stoneRadius bord_size
-      space = game_space bord_size
-      x_space = ((x + 1 + stone_radius) // space)
-      y_space = ((y + 1 + stone_radius) // space)
+      stone_radius  = space // 2
+      space = game_space (bord_size)
+      || totaal 23 spaces.
+      || Het bord loopt van de 3e space tot en met de 22e
+      || Stenen zijn 1 space breed en liggen met hun midden
+      || op de spacing punten.
+      || We tellen 1 op by x en y zodat de range [0..2] word ipv [-1, 1]
+      || Als we ze dan door space delen krijgen we een getal dat aangeeft
+      || in welke space het ligt.
+      || Space 0 = buiten het bord.
+      || Space 1-1.5 = rand van het bord, niet klikbaar
+      || Space 1.5-2.5 = de eerste rij/kolom.
+      || Probleem: de precisie lijkt af te nemen naarmate x,y -> 1,1 (rechtsonder)
+      || Mogelijke oplossing richting: space klopt toch niet? Zo niet, te groot, te klein, waarom?
+      ||                             : de 1.5 moet eraf in een andere vorm? (voor de deler?)
+      ||                             : het truncaten van _space klopt niet, andere afronding.
+      x_space = ((x + 1) // space) - 1.5
+      y_space = ((y + 1) // space) - 1.5
       pos_x = trunc x_space
       pos_y = bord_size - (trunc y_space) || geinverteerd in y as
       on_bord = x -> between ((hd spacing) - stone_radius) ((last spacing) + stone_radius) x
