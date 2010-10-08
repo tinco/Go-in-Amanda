@@ -1,19 +1,25 @@
 || Input
 
-handleInput gameTp (MouseUp(x,y) : es) ||Turn
-  = ||(x//een-1, y//een-1) : 
-    handleInput gameTp es
+handleInput game (KeyIn 'n' : es) || New game
+  = (tekenBord bord) ++ handleInput game es
   where
-    {bord=bord}=gameTp
-    een = 2//(#bord) || Het tekenscherm is altijd 2 breed (van -1 tot 1)
+    {bord=bord}=game
+
+handleInput game (MouseUp(x,y) : es) ||Turn
+  = (tekenBord newBord) ++ handleInput game es
+  where
+    {bord=bord}=game
+    on_stone = onStone bord (x,y)
+    Just (position) = on_stone
+    newBord = setPosition bord White position , if on_stone ~= Nothing
+            = bord , otherwise 
+    new_game_state = game & {bord=newBord}
 
 handleInput gameTp (KeyIn 'p' : es) ||Pass
   = handleInput gameTp es || Ook nog beurt naar de volgende
 
 || Functies voor het functioneren van de app. Deze moeten altijd als laatste.
-
 handleInput gameTp (KeyIn '\e' : es) = [] || Stop.
-
-handleInput gameTp (KeyIn e : es) = handleInput gameTp es || Handel alle overige inputevents af door er niks mee te doen en verder te gaan met de volgende.
-
-
+  
+|| Handel alle overige inputevents af door er niks mee te doen en verder te gaan met de volgende.
+handleInput gameTp ( e : es) = handleInput gameTp es

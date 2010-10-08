@@ -15,7 +15,8 @@ gameTp ::= { bord :: goBordTp ,
              history :: [goBordTp] ,
              speler :: spelerTp ,
              score :: scoreTp,
-             winnaar :: winnaarTp }
+             winnaar :: winnaarTp,
+             graphics :: graphics }
 
 newGameState komi bord_size
  =             { bord = (newBord bord_size),
@@ -25,6 +26,4 @@ newGameState komi bord_size
                  winnaar = None }
 
 || Run go
-main = graphicsout (handleInput (newGameState 0 19) eventsin)
-  where
-    bord = ex_group
+main = graphicsout (handleInput (newGameState 0 19) (KeyIn 'n' : eventsin))

@@ -51,6 +51,8 @@ goban_spacing :: num -> [num]
 goban_spacing bord_size = sublist (game_spacing bord_size) 1 (bord_size + 2)
 bord_spacing :: num -> [num]
 bord_spacing bord_size = sublist (goban_spacing bord_size) 1 bord_size
+game_space :: num -> num
+game_space bord_size = 2 // bord_size
 
 || Maakt van 2 posities een array voor PolyLine
 toline :: posTp -> posTp -> [posTp]
@@ -67,9 +69,25 @@ discPosition :: num -> posTp -> (posTp, posTp)
 discPosition bord_size (x,y) 
   = ((x - stone_radius, y - stone_radius), (x + stone_radius, y + stone_radius))
   where
-    spacing = bord_spacing bord_size
-    stone_radius1 = ((foldl1 (minus) (reverse (take 2 spacing))) // 2)
-    stone_radius = stone_radius1 * (15//16) || verkleiningsfactor (weghalen als plaatjes?)
+    stone_radius = stoneRadius bord_size
+      
+stoneRadius bord_size
+  = ((game_space bord_size) // 2 ) * (15//16)
+      
+onStone :: goBordTp -> posTp -> maybe posTp
+onStone bord (x,y)
+  = Just (pos_x, pos_y) , if on_bord x /\ on_bord y
+  = Nothing , otherwise
+    where
+      bord_size = #bord
+      spacing = bord_spacing bord_size
+      stone_radius  = stoneRadius bord_size
+      space = game_space bord_size
+      x_space = ((x + 1 + stone_radius) // space)
+      y_space = ((y + 1 + stone_radius) // space)
+      pos_x = trunc x_space
+      pos_y = bord_size - (trunc y_space) || geinverteerd in y as
+      on_bord = x -> between ((hd spacing) - stone_radius) ((last spacing) + stone_radius) x
     
 ||============= constants =====================================
 

@@ -17,10 +17,10 @@
 || Geen 
 
 gameStateTp ::= Begin gameTp | Turn gameTp | Score gameTp | Eind gameTp
-actionTp ::= Affirm | Move | Pass | Resign | Mark | InvalidMove | Nothing
+actionTp ::= Affirm | Move | Pass | Resign | Mark | InvalidMove
   
 || gameFSA ::= gameStateTp -> actionTp -> gameStateTp
-gameFSA (Begin game) Affirm = (Turn (executeBegin), Nothing)
+gameFSA (Begin game) Affirm = (Turn (executeBegin), Move)
 gameFSA (Turn game) action = (newState, newAction)
                          where
                             (newGame, newAction) = executeTurn game

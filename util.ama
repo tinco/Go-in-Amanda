@@ -36,7 +36,24 @@ unique list = foldl unique_append [] list
 || substracts a from b
 minus :: num -> num -> num
 minus a b = a - b
+  
+||
+between :: num -> num -> num -> bool
+between a b x = (x > a) /\ (b > x)
         
 || Spread divides a range (b-e) into n points with equal spacing.
 spread :: num -> num -> num -> [num]
 spread b e n = take n (iterate (+((e-b)//(n-1))) (-1))
+  
+||
+
+detect :: (* -> bool) -> [*] -> (maybe *)
+detect test [] = Nothing
+detect test (x:xs) = Just x , if test x
+                   = detect test xs , otherwise
+  
+|| ****************** ||
+||Gestolen uit practica:
+|| Een handige type voor onzekere return waardes.
+maybe * ::= Nothing | Just *
+|| ****************** ||
