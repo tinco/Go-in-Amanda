@@ -35,9 +35,10 @@ gameFSA (Turn, game, events) = (newState, newGame, rest)
                                        = Eind , if winnaar ~= None
                                        = Turn , otherwise
 gameFSA (Score, game, events) = (Eind, newGame, rest) , if winnaar ~= None
-                                (Score, newGame, rest) , otherwise
+                              = (Score, newGame, rest) , otherwise
                               where
                                 (newGame, rest) = executeScore game events
+                                {winnaar=winnaar}=newGame
 gameFSA (Eind, game, events) = (Begin, newGame, rest)
                              where
                                 (newGame, rest) = executeEind game events
@@ -55,7 +56,7 @@ executeBegin game events = (new_game , events)
 executeBegin2 game events = (new_game, rest)
                           where
                             (bordsize,rest) = handleBegin2 events
-                            new_game = renderGame (newGameState 6.5 bordsize)                      
+                            new_game = renderBord (newGameState 6.5 bordsize)                      
          
 || Request een zet.
 executeTurn game events
@@ -66,7 +67,7 @@ executeTurn game events
    new_game = renderBord (newGame & {speler=(nextPlayer speler)})
 
 executeScore game events
-  = (new_Game , rest)
+  = (new_game , rest)
   where
     (newGame, rest) = handleScore game events
     new_game = renderScore newGame

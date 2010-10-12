@@ -24,31 +24,40 @@
 |||| Handel alle overige inputevents af door er niks mee te doen en verder te gaan met de volgende.
 ||handleInput gameTp ( e : es) = handleInput gameTp es
   
-|| handleTurn
+|| Turn
 
 handleTurn game (MouseUp(x,y) : es) ||Turn
-  = (new_game, es), if ~invalidpos /\ ~suicide
+  = (new_game, es) , if ~invalidpos /\ ~suicide
   = handleTurn game es, otherwise
   where
-    {bord=bord, speler=speler, history=history}=game
+    {bord=bord, speler=speler, history=history, score=score}=game
+    (s_b, s_w) = score
     on_stone = onStone bord (x,y)
     Just (position) = on_stone
-    invalidpos = on_stone ~= Nothing /\ getPosition bord position ~= None
-    new_history = history ++ [bord]
-    new_bord = setPosition bord speler position
-             = bord , otherwise 
-    (new_bord, score) = calcScore bord speler position
-    suicide = calcSuicide bord speler position
+    invalidpos = on_stone = Nothing \/ getPosition bord position ~= None
+    
+    (new_bord, p_score) = move bord speler position , if ~invalidpos
+                        = (bord, 0) , otherwise
+    new_score = (s_b + p_score, s_w) , if speler = Black
+              = (s_b, s_w + p_score) , otherwise
+                
+    suicide = isGroupDead new_bord (group new_bord position)
     ||Score
-    new_game = game & {bord=new_bord, history=new_history}
+    new_history = history ++ [new_bord]
+    new_game = game & {bord=new_bord, history=new_history, score=new_score}
       
 handleTurn game (e : es)
   = handleTurn game es
+<<<<<<< HEAD
 <<<<<<< HEAD
   
 =======
 
 >>>>>>> score begin
+=======
+
+|| Begin
+>>>>>>> muahahaha hij werkt :D (dode groepen removen)
 handleBegin2 (Prompt "Bord size" bord_size : events)
   = (atoi bord_size, events)
     
@@ -59,12 +68,15 @@ handleBegin2 (e : events)
 handleScore game (MouseUp(x,y):es)
   = (new_game,es)
   where
-    {bord=bord, (score_w, score_b)=score} = game
+    {bord=bord, score=score} = game
+    (s_b, s_w) = score
     on_stone = onStone bord (x,y)
     Just (position) = on_stone
-    (new_bord, (p_score_b, p_score_w)) = killGroup bord position, if position
-                          = (bord, score) , otherwise
-    new_score = ((p_score_b + score_b), (p_score_w + score_w))
+    (new_bord, p_score, speler) = (killGroup bord (group bord position), #(group bord position), getPosition bord position), if on_stone ~= Nothing
+                                = (bord,0, None) , otherwise
+    new_score = (s_b + p_score, s_w) , if speler = Black
+              = (s_b, s_w + p_score) , otherwise
+                
     new_game = game & {bord=new_bord, score = new_score}
 
 handleScore game (e:es) = handleScore game es
