@@ -51,7 +51,8 @@ executeTurn game events
  = (new_game, rest)
  where
    (newGame, rest) = handleTurn game events
-   new_game = renderGame newGame
+   {speler=speler} = newGame
+   new_game = renderGame (newGame & {speler=(nextPlayer speler)})
 
 executeScore game events = (game , events)
 executeEind game events = (game, events)

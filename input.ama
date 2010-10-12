@@ -29,12 +29,13 @@
 handleTurn game (MouseUp(x,y) : es) ||Turn
   = (new_game, es)
   where
-    {bord=bord}=game
+    {bord=bord, speler=speler, history=history}=game
     on_stone = onStone bord (x,y)
     Just (position) = on_stone
-    new_bord = setPosition bord White position , if on_stone ~= Nothing
+    new_history = history ++ [bord]
+    new_bord = setPosition bord speler position , if on_stone ~= Nothing
              = bord , otherwise 
-    new_game = game & {bord=new_bord}
+    new_game = game & {bord=new_bord, history=new_history}
       
 handleTurn game (e : es)
   = handleTurn game es
