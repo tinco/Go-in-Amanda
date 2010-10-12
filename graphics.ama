@@ -31,8 +31,16 @@ renderGame game
     where
       new_game = (renderStatusBar (renderBord game))
       {graphics=graphics} = new_game
-        
-renderStatusBar game = game || Status, wie is aan beurt, wat zijn de scores, wat is de fase.
+
+|| Status, wie is aan beurt, wat zijn de scores, wat is de fase.        
+renderStatusBar game
+ = game & {graphics = new_graphics}
+  where
+    {graphics=graphics, bord=bord} = game
+    space = game_space (#bord)
+    bar_coords = [(-1, 2 - space), (1, 2-space), (1,2), (-1,2), (-1, 2-space)]
+    new_graphics = GraphPolygon white bar_coords :
+                   GraphPolyLine black bar_coords : graphics
 
 || Geeft de posities van de lijnen op het bord.
 lineCoords :: num -> [[posTp]]
@@ -74,7 +82,7 @@ goban_spacing bord_size = sublist (game_spacing bord_size) 1 (bord_size + 2)
 bord_spacing :: num -> [num]
 bord_spacing bord_size = sublist (goban_spacing bord_size) 1 bord_size
 game_space :: num -> num
-game_space bord_size = 2 // (bord_size + 4)
+game_space bord_size = 2 // (bord_size + 3)
 
 || Maakt van 2 posities een array voor PolyLine
 toline :: posTp -> posTp -> [posTp]
@@ -108,7 +116,7 @@ onStone bord (x,y)
       spacing = bord_spacing bord_size
       stone_radius  = space // 2
       space = game_space (bord_size)
-      closest_space = x->( hd [i | (s,i)<-(zip (spacing,nat 0 (bord_size - 1) )) ; ((s - x) < stone_radius) /\ ((s - x) > (-stone_radius))])
+      closest_space = x->( hd [i | (s,i)<-(zip (spacing,nat 0 (bord_size - 1) )) ; ((s - x) <= stone_radius) /\ ((s - x) >= (-stone_radius))])
       pos_x = (closest_space x)
       pos_y = (bord_size-1 ) - (closest_space y)
       on_bord = x -> between ((hd spacing) - stone_radius) ((last spacing) + stone_radius) x
