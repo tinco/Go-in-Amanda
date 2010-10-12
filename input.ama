@@ -34,12 +34,23 @@ handleTurn game (MouseUp(x,y) : es) ||Turn
     Just (position) = on_stone
     new_history = history ++ [bord]
     new_bord = setPosition bord speler position , if on_stone ~= Nothing
-             = bord , otherwise 
+             = bord , otherwise
     new_game = game & {bord=new_bord, history=new_history}
       
+handleTurn game (KeyIn 'p' : es) ||Pass
+  = (new_game, es)
+  where
+    {pass=pass} = game
+    new_game = game & {pass=(pass+1)}
+
+handleTurn game (KeyIn 'r' : es) ||Resign
+  = (new_game, es)
+  where
+    {speler=speler} = game
+    new_game = game & {winnaar=speler}
+      
 handleTurn game (e : es)
-  = handleTurn game es
-  
+  = handleTurn game es  
 handleBegin2 (Prompt "Bord size" bord_size : events)
   = (atoi bord_size, events)
 handleBegin2 (e : events)
