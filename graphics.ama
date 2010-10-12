@@ -92,26 +92,11 @@ onStone bord (x,y)
       spacing = bord_spacing bord_size
       stone_radius  = space // 2
       space = game_space (bord_size)
-      || totaal 23 spaces.
-      || Het bord loopt van de 3e space tot en met de 22e
-      || Stenen zijn 1 space breed en liggen met hun midden
-      || op de spacing punten.
-      || We tellen 1 op by x en y zodat de range [0..2] word ipv [-1, 1]
-      || Als we ze dan door space delen krijgen we een getal dat aangeeft
-      || in welke space het ligt.
-      || Space 0 = buiten het bord.
-      || Space 1-1.5 = rand van het bord, niet klikbaar
-      || Space 1.5-2.5 = de eerste rij/kolom.
-      || Probleem: de precisie lijkt af te nemen naarmate x,y -> 1,1 (rechtsonder)
-      || Mogelijke oplossing richting: space klopt toch niet? Zo niet, te groot, te klein, waarom?
-      ||                             : de 1.5 moet eraf in een andere vorm? (voor de deler?)
-      ||                             : het truncaten van _space klopt niet, andere afronding.
-      x_space = ((x + 1) // space) - 1.5
-      y_space = ((y + 1) // space) - 1.5
-      pos_x = trunc x_space
-      pos_y = bord_size - (trunc y_space) || geinverteerd in y as
+      closest_space = x->( hd [i | (s,i)<-(zip (spacing,nat 0 (bord_size - 1) )) ; ((s - x) < stone_radius) /\ ((s - x) > (-stone_radius))])
+      pos_x = (closest_space x)
+      pos_y = (bord_size-1 ) - (closest_space y)
       on_bord = x -> between ((hd spacing) - stone_radius) ((last spacing) + stone_radius) x
-    
+
 ||============= constants =====================================
 
 black       =  0
