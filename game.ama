@@ -16,14 +16,17 @@
 || Suicide is verboden
 || Geen 
 
-gameStatesTp ::= Begin | Turn | Score | Eind
+gameStatesTp ::= Begin | Begin2 | Turn | Score | Eind
 gameStateTp == (gameStatesTp, gameTp, [inputevent])
 
 || Een statemachine die het bovenbeschreven spelverloop modelleert.
 gameFSA :: gameStateTp -> gameStateTp
-gameFSA (Begin, game, events) = (Turn, newGame, rest)
+gameFSA (Begin, game, events) = (Begin2, newGame, rest)
                               where
-                                (newGame, rest) = (executeBegin events)
+                                (newGame, rest) = (executeBegin game events)
+gameFSA (Begin2, game, events) = (Turn, newGame, rest)
+                               where
+                                (newGame, rest) = (executeBegin2 game events)
 gameFSA (Turn, game, events) = (newState, newGame, rest)
                              where
                               (newGame, rest) = executeTurn game events
@@ -42,9 +45,16 @@ nextPlayer White = Black
 nextPlayer Black = White
 
 || In deze fase vragen om komi en bord size
-executeBegin events = (new_game , events)
-                    where
-                      new_game = renderGame (newGameState 6.5 19)
+executeBegin game events = (new_game , events)
+                         where
+                           {graphics=graphics}=game
+                           new_game = game & {graphics = GraphPrompt "Bord size" "Bord size?" : graphics}
+                      
+
+executeBegin2 game events = (new_game, rest)
+                          where
+                            (bordsize,rest) = handleBegin2 events
+                            new_game = renderGame (newGameState 6.5 bordsize)                      
          
 || Request een zet.
 executeTurn game events

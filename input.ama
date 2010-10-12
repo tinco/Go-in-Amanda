@@ -39,3 +39,8 @@ handleTurn game (MouseUp(x,y) : es) ||Turn
       
 handleTurn game (e : es)
   = handleTurn game es
+  
+handleBegin2 (Prompt "Bord size" bord_size : events)
+  = (atoi bord_size, events)
+handleBegin2 (e : events)
+  = handleBegin2 events
