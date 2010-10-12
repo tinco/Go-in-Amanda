@@ -34,7 +34,8 @@ gameFSA (Turn, game, events) = (newState, newGame, rest)
                               newState = Score , if pass = 2
                                        = Eind , if winnaar ~= None
                                        = Turn , otherwise
-gameFSA (Score, game, events) = (Eind, newGame, rest)
+gameFSA (Score, game, events) = (Eind, newGame, rest) , if winnaar ~= None
+                                (Score, newGame, rest) , otherwise
                               where
                                 (newGame, rest) = executeScore game events
 gameFSA (Eind, game, events) = (Begin, newGame, rest)
@@ -62,9 +63,14 @@ executeTurn game events
  where
    (newGame, rest) = handleTurn game events
    {speler=speler} = newGame
-   new_game = renderGame (newGame & {speler=(nextPlayer speler)})
+   new_game = renderBord (newGame & {speler=(nextPlayer speler)})
 
-executeScore game events = (game , events)
+executeScore game events
+  = (new_Game , rest)
+  where
+    (newGame, rest) = handleScore game events
+    new_game = renderScore newGame
+
 executeEind game events = (game, events)
   
 runGame :: gameStateTp -> [graphics]

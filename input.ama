@@ -44,8 +44,27 @@ handleTurn game (MouseUp(x,y) : es) ||Turn
       
 handleTurn game (e : es)
   = handleTurn game es
+<<<<<<< HEAD
   
+=======
+
+>>>>>>> score begin
 handleBegin2 (Prompt "Bord size" bord_size : events)
   = (atoi bord_size, events)
+    
 handleBegin2 (e : events)
   = handleBegin2 events
+    
+|| Score
+handleScore game (MouseUp(x,y):es)
+  = (new_game,es)
+  where
+    {bord=bord, (score_w, score_b)=score} = game
+    on_stone = onStone bord (x,y)
+    Just (position) = on_stone
+    (new_bord, (p_score_b, p_score_w)) = killGroup bord position, if position
+                          = (bord, score) , otherwise
+    new_score = ((p_score_b + score_b), (p_score_w + score_w))
+    new_game = game & {bord=new_bord, score = new_score}
+
+handleScore game (e:es) = handleScore game es
