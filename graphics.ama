@@ -26,21 +26,24 @@ renderScore game
 renderGame game
   = new_game & 
     {graphics= GraphClear :
-              (GraphTitle "Play Go! by Jarmo van Lenthe and Tinco Andringa") :
-               graphics} || Clear de graphics voor iedere render.
+               graphics ++ [
+                 GraphText white (-0.99,0.99) (makeStatus new_game) ,
+                 GraphText white (-0.99, -0.95) "Press 'r' to resign. Press 'p' to pass."
+                 ]}
+               || Clear de graphics voor iedere render.
     where
-      new_game = (renderStatusBar (renderBord game))
-      {graphics=graphics} = new_game
+      new_game = renderBord game
+      {graphics=graphics, bord=bord} = new_game
 
-|| Status, wie is aan beurt, wat zijn de scores, wat is de fase.        
-renderStatusBar game
- = game & {graphics = new_graphics}
-  where
-    {graphics=graphics, bord=bord} = game
-    space = game_space (#bord)
-    bar_coords = [(-1, 2 - space), (1, 2-space), (1,2), (-1,2), (-1, 2-space)]
-    new_graphics = GraphPolygon white bar_coords :
-                   GraphPolyLine black bar_coords : graphics
+makeStatus game = "Turn: " ++ (textPlayer speler) ++ " " ++
+                  "Scores: Black " ++ (ftoa s_b) ++ " - White " ++ (ftoa s_w)
+                where
+                  {speler=speler, score=score} = game
+                  (s_b, s_w) = score
+
+textPlayer White = "White"
+textPlayer Black = "Black"
+textPlayer None  = "None"
 
 || Geeft de posities van de lijnen op het bord.
 lineCoords :: num -> [[posTp]]
