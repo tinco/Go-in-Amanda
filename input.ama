@@ -44,7 +44,17 @@ handleTurn game (MouseUp(x,y) : es) ||Turn
     suicide = isGroupDead new_bord (group new_bord position)
     ||Score
     new_history = history ++ [new_bord]
-    new_game = game & {bord=new_bord, history=new_history, score=new_score}
+    new_game = game & {bord=new_bord, history=new_history, score=new_score, pass=0}
+
+handleTurn game (KeyIn 'r' : es)
+  = (game & {winnaar=speler}, es)
+    where
+      {winnaar=winnaar, speler=speler} = game
+    
+handleTurn game (KeyIn 'p' : es)
+  = (game & {pass=pass + 1}, es)
+    where
+      {pass=pass} = game
       
 handleTurn game (e : es)
   = handleTurn game es

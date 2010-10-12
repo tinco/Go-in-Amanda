@@ -22,6 +22,17 @@ renderScore game
   = new_game
     where
       new_game = (renderBord game)
+     
+renderGame game
+  = new_game & 
+    {graphics= GraphClear :
+              (GraphTitle "Play Go! by Jarmo van Lenthe and Tinco Andringa") :
+               graphics} || Clear de graphics voor iedere render.
+    where
+      new_game = (renderStatusBar (renderBord game))
+      {graphics=graphics} = new_game
+        
+renderStatusBar game = game || Status, wie is aan beurt, wat zijn de scores, wat is de fase.
 
 || Geeft de posities van de lijnen op het bord.
 lineCoords :: num -> [[posTp]]

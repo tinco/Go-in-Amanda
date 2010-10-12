@@ -56,7 +56,7 @@ executeBegin game events = (new_game , events)
 executeBegin2 game events = (new_game, rest)
                           where
                             (bordsize,rest) = handleBegin2 events
-                            new_game = renderBord (newGameState 6.5 bordsize)                      
+                            new_game = renderGame (newGameState 6.5 bordsize)                      
          
 || Request een zet.
 executeTurn game events
@@ -64,7 +64,7 @@ executeTurn game events
  where
    (newGame, rest) = handleTurn game events
    {speler=speler} = newGame
-   new_game = renderBord (newGame & {speler=(nextPlayer speler)})
+   new_game = renderGame (newGame & {speler=(nextPlayer speler)})
 
 executeScore game events
   = (new_game , rest)
