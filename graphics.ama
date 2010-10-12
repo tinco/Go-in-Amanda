@@ -73,7 +73,6 @@ stoneCoords bord
                 ) bord spacing )
     stenen = filter ((_,c)-> c ~= None) positions
     
-      
 || Om de punten van het bord is 1 space ruimte voor de stenen
 || en 1 space ruimte voor de rand van het bord
 || Deze functies geven arrays met daarin de verdeling van het bord

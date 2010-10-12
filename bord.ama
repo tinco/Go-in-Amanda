@@ -73,4 +73,30 @@ killGroup bord groep
 ex_group = [[Black, Black, Black] ,
             [Black, None,  Black] ,
             [Black, Black, None ] ]
-            
+
+|| Geeft de posities voor de stenen. Op het bord. 
+getPositions :: goBordTp -> [(positionTp,spelerTp)]      
+getPositions bord
+  = stenen
+  where
+    bord_size = #bord
+    || Dit is redelijk sexy:
+    positions = concat (zipwith (rij->space_x->
+                 (zipwith (steen->space_y->
+                   ((space_x, space_y), steen)
+                  ) rij ( (nat 0 (bord_size -1))) ) || Spiegelen in de y-as
+                ) bord (nat 0 (bord_size -1)) )
+    stenen = filter ((_,c)-> c ~= None) positions
+      
+getGroups :: goBordTp -> [([positionTp], spelerTp)]
+getGroups bord
+  = h_groups bord ([p | (p,c)<-(getPositions bord)]) []
+    
+h_groups bord [] groups = groups
+h_groups bord ((position):positions) groups
+  = h_groups bord new_positions new_groups
+  where
+    new_group = (group bord position)
+    kleur = getPosition bord position
+    new_groups = (new_group, kleur) : groups
+    new_positions = positions -- new_group
