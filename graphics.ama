@@ -11,6 +11,12 @@ tekenBord bord = background : goban : lijnen ++ stenen
     goban = GraphRectangle lightgrey (hd goban_s, hd goban_s) (last goban_s, last goban_s)
     lijnen = map (l->GraphPolyLine black l) (lineCoords bord_size)
     stenen = map (((x, y), k)->GraphDisc (spelerKleur k) x y) (stoneCoords bord)
+      
+renderGame game
+  = new_game
+  where
+    {bord=bord, graphics=graphics} = game
+    new_game = game & {graphics=(graphics++(tekenBord bord))} 
 
 || Geeft de posities van de lijnen op het bord.
 lineCoords :: num -> [[posTp]]

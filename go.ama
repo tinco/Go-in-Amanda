@@ -16,14 +16,18 @@ gameTp ::= { bord :: goBordTp ,
              speler :: spelerTp ,
              score :: scoreTp,
              winnaar :: winnaarTp,
-             graphics :: graphics }
+             pass :: num,
+             graphics :: [graphics] }
 
 newGameState komi bord_size
  =             { bord = (newBord bord_size),
                  history = [] ,
                  speler = Black ,
                  score = (0, komi) ,
-                 winnaar = None }
+                 winnaar = None ,
+                 pass = 0 ,
+                 graphics = [] }
 
 || Run go
-main = graphicsout (handleInput (newGameState 0 19) (KeyIn 'n' : eventsin))
+main = graphicsout (runGame (Begin, newGameState 0 0 , eventsin))
+|| main = graphicsout (handleInput (newGameState 0 19) (KeyIn 'n' : eventsin))

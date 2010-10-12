@@ -16,24 +16,50 @@
 || Suicide is verboden
 || Geen 
 
-gameStateTp ::= Begin gameTp | Turn gameTp | Score gameTp | Eind gameTp
-actionTp ::= Affirm | Move | Pass | Resign | Mark | InvalidMove
-  
-|| gameFSA ::= gameStateTp -> actionTp -> gameStateTp
-gameFSA (Begin game) Affirm = (Turn (executeBegin), Move)
-gameFSA (Turn game) action = (newState, newAction)
-                         where
-                            (newGame, newAction) = executeTurn game
-                            newState = Score newGame , if action = Pass /\ newAction = Pass
-                                     = Eind newGame , if action = Resign
-                                     = Turn newGame, otherwise
-gameFSA (Score game) Pass = (Eind (executeScore game), Mark)
-gameFSA (Eind game) action = (Begin (executeEind game), Affirm)
+gameStatesTp ::= Begin | Turn | Score | Eind
+gameStateTp == (gameStatesTp, gameTp, [inputevent])
+
+|| Een statemachine die het bovenbeschreven spelverloop modelleert.
+gameFSA :: gameStateTp -> gameStateTp
+gameFSA (Begin, game, events) = (Turn, newGame, rest)
+                              where
+                                (newGame, rest) = (executeBegin events)
+gameFSA (Turn, game, events) = (newState, newGame, rest)
+                             where
+                              (newGame, rest) = executeTurn game events
+                              {pass=pass, winnaar=winnaar} = newGame
+                              newState = Score , if pass = 2
+                                       = Eind , if winnaar ~= None
+                                       = Turn , otherwise
+gameFSA (Score, game, events) = (Eind, newGame, rest)
+                              where
+                                (newGame, rest) = executeScore game events
+gameFSA (Eind, game, events) = (Begin, newGame, rest)
+                             where
+                                (newGame, rest) = executeEind game events
                   
 nextPlayer White = Black
 nextPlayer Black = White
-                          
-executeTurn game = (game, Move)
-executeScore game = game
-executeBegin = newGameState 6.5 19
-executeEind game = game
+
+|| In deze fase vragen om komi en bord size
+executeBegin events = (new_game , events)
+                    where
+                      new_game = renderGame (newGameState 6.5 19)
+         
+|| Request een zet.
+executeTurn game events
+ = (new_game, rest)
+ where
+   (newGame, rest) = handleTurn game events
+   new_game = renderGame newGame
+
+executeScore game events = (game , events)
+executeEind game events = (game, events)
+  
+runGame :: gameStateTp -> [graphics]
+runGame (state)
+  = graphics ++ (runGame (s,newGame,r)) , if s ~= Eind
+  = graphics , otherwise
+  where
+    (s,newGame,r) = gameFSA (state)
+    {graphics=graphics} = newGame
