@@ -27,31 +27,24 @@
 || handleTurn
 
 handleTurn game (MouseUp(x,y) : es) ||Turn
-  = (new_game, es)
+  = (new_game, es), if ~invalidpos /\ ~suicide
+  = handleTurn game es, otherwise
   where
     {bord=bord, speler=speler, history=history}=game
     on_stone = onStone bord (x,y)
     Just (position) = on_stone
+    invalidpos = on_stone ~= Nothing /\ getPosition bord position ~= None
     new_history = history ++ [bord]
-    new_bord = setPosition bord speler position , if on_stone ~= Nothing
-             = bord , otherwise
+    new_bord = setPosition bord speler position
+             = bord , otherwise 
+    (new_bord, score) = calcScore bord speler position
+    suicide = calcSuicide bord speler position
+    ||Score
     new_game = game & {bord=new_bord, history=new_history}
-      
-handleTurn game (KeyIn 'p' : es) ||Pass
-  = (new_game, es)
-  where
-    {pass=pass} = game
-    new_game = game & {pass=(pass+1)}
-
-handleTurn game (KeyIn 'r' : es) ||Resign
-  = (new_game, es)
-  where
-    {speler=speler} = game
-    new_game = game & {winnaar=speler}
       
 handleTurn game (e : es)
   = handleTurn game es
-      
+
 handleBegin2 (Prompt "Bord size" bord_size : events)
   = (atoi bord_size, events)
     
