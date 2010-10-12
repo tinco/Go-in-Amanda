@@ -25,9 +25,11 @@
 ||handleInput gameTp ( e : es) = handleInput gameTp es
   
 || Turn
-
+|| A stone may not be placed upon another stone.
+|| A stone may not result in an own group dying.
+|| A stone may not recreate the previous situation.
 handleTurn game (MouseUp(x,y) : es) ||Turn
-  = (new_game, es) , if ~invalidpos /\ ~suicide
+  = (new_game, es) , if ~invalidpos /\ ~suicide /\ ~ko
   = handleTurn game es, otherwise
   where
     {bord=bord, speler=speler, history=history, score=score}=game
@@ -42,6 +44,8 @@ handleTurn game (MouseUp(x,y) : es) ||Turn
               = (s_b, s_w + p_score) , otherwise
                 
     suicide = isGroupDead new_bord (group new_bord position)
+    ko = new_bord = (history ! (#history - 2)) , if #history > 2
+       = False , otherwise
     ||Score
     new_history = history ++ [new_bord]
     new_game = game & {bord=new_bord, history=new_history, score=new_score, pass=0}
