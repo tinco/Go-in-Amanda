@@ -13,6 +13,15 @@ getPosition bord (x, y)
 setPosition :: goBordTp -> posStateTp -> positionTp -> goBordTp
 setPosition bord state (x, y)
   = update bord x (update (bord ! x) y state)
+    
+move bord color position
+  = (new_bord, score)
+  where
+    bord_m = setPosition bord color position
+    buren = [b | b<- neighbours bord_m position ; getPosition bord_m b = nextPlayer color]
+    dode_buren = filter (isGroupDead bord_m) (map (group bord_m) buren)
+    score = foldl (t -> g -> t+(#g)) 0 dode_buren
+    new_bord = foldl killGroup bord_m dode_buren
 
 neighbours :: goBordTp -> positionTp -> [positionTp]
 neighbours bord (x,y)
@@ -54,16 +63,12 @@ h_groep bord collected fringe
 groupLiberties :: goBordTp -> [positionTp] -> [positionTp]
 groupLiberties bord group
   = unique (concat (map (posLiberties bord) group))
-  
-calcSuicide :: goBordTp -> spelerTp -> positionTp -> bool
-calcSuicide bord speler position
-  = groupLiberties bord (group bord position) = Nil
+    
+isGroupDead bord groep
+  = groupLiberties bord groep = Nil
   
 killGroup bord groep
-  = (newBord, score)
-  where
-    score = #groep
-    newBord = foldl (b -> p -> setPosition b None p) bord groep
+  = foldl (b -> p -> setPosition b None p) bord groep
       
 ex_group = [[Black, Black, Black] ,
             [Black, None,  Black] ,
