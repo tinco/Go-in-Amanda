@@ -3,17 +3,24 @@
 posStateTp == spelerTp
 positionTp == (num, num)
 goBordTp == [[posStateTp]]
-  
+
+|| Makes a new board of the given size.
+newBord :: num -> goBordTp  
 newBord bord_size = (repeat bord_size (repeat bord_size None))
 
+|| Returns the state of a position
 getPosition :: goBordTp -> positionTp -> posStateTp
 getPosition bord (x, y)
   = ((bord ! x) ! y)
 
+|| Sets a position on the board.
 setPosition :: goBordTp -> posStateTp -> positionTp -> goBordTp
 setPosition bord state (x, y)
   = update bord x (update (bord ! x) y state)
     
+|| Sets a position and then resolves any captures that may result to that move
+|| and returns the points awarded for those captures.
+move :: goBordTp -> posStateTp -> positionTp -> (goBordTp, num)
 move bord color position
   = (new_bord, score)
   where
@@ -23,6 +30,7 @@ move bord color position
     score = foldl (t -> g -> t+(#g)) 0 dode_buren
     new_bord = foldl killGroup bord_m dode_buren
 
+|| Returns the neighbouring positions to a position
 neighbours :: goBordTp -> positionTp -> [positionTp]
 neighbours bord (x,y)
   = buurposities
@@ -38,10 +46,12 @@ neighbours bord (x,y)
            = [] , otherwise
     buurposities = links ++ rechts ++ boven ++ onder
     
+|| Returns the liberties a single position has.
 posLiberties :: goBordTp -> positionTp -> [positionTp]
 posLiberties bord position
   = [ p | p <- (neighbours bord position) ; getPosition bord p = None]
-    
+
+|| Returns the group of stones a position is a part of.    
 group :: goBordTp -> positionTp -> [positionTp]
 group bord positie
   = h_groep bord [] [positie]
@@ -60,16 +70,22 @@ h_groep bord collected fringe
                   )
                  ) -- collected
 
+|| Returns the liberties a group of stones has
 groupLiberties :: goBordTp -> [positionTp] -> [positionTp]
 groupLiberties bord group
   = unique (concat (map (posLiberties bord) group))
-    
+
+|| Returns wether a group has any liberties.
+isGroupDead :: goBordTp -> [positionTp] -> bool    
 isGroupDead bord groep
   = groupLiberties bord groep = Nil
   
+|| Removes a group from the board.
+killGroup :: goBordTp -> [positionTp] -> goBordTp
 killGroup bord groep
   = foldl (b -> p -> setPosition b None p) bord groep
-      
+
+|| Example group used for testing      
 ex_group = [[Black, Black, Black] ,
             [Black, None,  Black] ,
             [Black, Black, None ] ]
@@ -80,7 +96,6 @@ getPositions bord
   = stenen
   where
     bord_size = #bord
-    || Dit is redelijk sexy:
     positions = concat (zipwith (rij->space_x->
                  (zipwith (steen->space_y->
                    ((space_x, space_y), steen)
