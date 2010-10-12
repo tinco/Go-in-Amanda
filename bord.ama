@@ -36,34 +36,7 @@ posLiberties bord position
 group :: goBordTp -> positionTp -> [positionTp]
 group bord positie
   = h_groep bord [] [positie]
-        
-|| Geeft de posities voor de stenen. Op het bord. 
-getPositions :: goBordTp -> [(positionTp,spelerTp)]      
-getPositions bord
-  = stenen
-  where
-    bord_size = #bord
-    || Dit is redelijk sexy:
-    positions = concat (zipwith (rij->space_x->
-                 (zipwith (steen->space_y->
-                   ((space_x, space_y), steen)
-                  ) rij ( (nat 0 (bord_size -1))) ) || Spiegelen in de y-as
-                ) bord (nat 0 (bord_size -1)) )
-    stenen = filter ((_,c)-> c ~= None) positions
-      
-getGroups :: goBordTp -> [([positionTp], spelerTp)]
-getGroups bord
-  = h_groups bord ([p | (p,c)<-(getPositions bord)]) []
-    
-h_groups bord [] groups = groups
-h_groups bord ((position):positions) groups
-  = h_groups bord new_positions new_groups
-  where
-    new_group = (group bord position)
-    kleur = getPosition bord position
-    new_groups = (new_group, kleur) : groups
-    new_positions = positions -- new_group
-        
+
 h_groep :: goBordTp -> [positionTp] -> [positionTp] -> [positionTp]
 h_groep bord collected fringe
   = h_groep bord new_collected new_fringe, if new_fringe ~= []
@@ -81,6 +54,16 @@ h_groep bord collected fringe
 groupLiberties :: goBordTp -> [positionTp] -> [positionTp]
 groupLiberties bord group
   = unique (concat (map (posLiberties bord) group))
+  
+calcSuicide :: goBordTp -> spelerTp -> positionTp -> bool
+calcSuicide bord speler position
+  = groupLiberties bord (group bord position) = Nil
+  
+killGroup bord groep
+  = (newBord, score)
+  where
+    score = #groep
+    newBord = foldl (b -> p -> setPosition b None p) bord groep
       
 ex_group = [[Black, Black, Black] ,
             [Black, None,  Black] ,
