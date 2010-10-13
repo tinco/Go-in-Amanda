@@ -3,10 +3,11 @@ posTp == (num, num)
 
 || Geeft de graphics objecten voor het gegeven bord terug.  
 tekenBord :: goBordTp -> [(graphics)]
-tekenBord bord = background : goban : lijnen ++ stenen
+tekenBord bord = background : goban : lijnen ++ punten ++ stenen
   where
     bord_size = #bord
     background = GraphRectangle darkgrey ((-1),(-1)) (1,1)
+    punten = drawPunten bord_size
     goban_s = goban_spacing bord_size
     goban = GraphRectangle lightgrey (hd goban_s, hd goban_s) (last goban_s, last goban_s)
     lijnen = map (l->GraphPolyLine black l) (lineCoords bord_size)
@@ -18,6 +19,17 @@ drawStone bord kleur position
   where
     bord_size = #bord
     (x,y) = discPosition bord_size position
+      
+drawPunten bord_size
+  = map ((x,y)->GraphDisc black x y) discs, if bord_size = 19
+  = [] , otherwise
+  where
+    posities = [(3,3), (9,3), (15,3), (9,3) , (9,9), (9,15) ,(15, 3), (15, 9), (15,15), (3,15), (3,9)]
+    coords = map (getCoords bord_size) posities
+    discs = map (discPosition (bord_size * 3)) coords
+
+getCoords bord_size (x,y)
+  = (((bord_spacing bord_size)! x), ((bord_spacing bord_size)! ((bord_size -1) - y)))
       
 renderBord game
   = new_game
