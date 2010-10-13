@@ -58,7 +58,7 @@ executeBegin2 game events = (new_game, rest)
                             (bordsize,rest) = handleBegin2 events
                             komi = 0 , if bordsize < 13 || Beetje guesstimate
                                  = 6.5 , otherwise
-                            new_game = renderGame (newGameState komi bordsize)                      
+                            new_game = renderTurn (newGameState komi bordsize)                      
          
 || Request een zet.
 executeTurn game events
@@ -66,15 +66,15 @@ executeTurn game events
  where
    (newGame, rest) = handleTurn game events
    {speler=speler} = newGame
-   new_game = renderGame (newGame & {speler=(nextPlayer speler)})
+   new_game = renderTurn (newGame & {speler=(nextPlayer speler)})
 
 executeScore game events
   = (new_game , rest)
   where
     (newGame, rest) = handleScore game events
-    new_game = renderScore newGame
+    new_game = renderScore (newGame & {speler=None})
 
-executeEind game events = (renderGame game, events)
+executeEind game events = (renderEind game, events)
   
 runGame :: gameStateTp -> [graphics]
 runGame (state)

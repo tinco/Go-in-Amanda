@@ -19,27 +19,37 @@ renderBord game
     new_game = game & {graphics=(graphics++(tekenBord bord))} 
       
 renderScore game
-  = new_game
-    where
-      new_game = (renderBord game)
-     
-renderGame game
+  = renderGame game ("Scoring - " ++ (textScore game)) "Press 'd' when you are done marking groups as dead."
+    
+renderTurn game
+  = renderGame game (makeStatus game) "Press 'r' to resign. Press 'p' to pass."
+    
+renderEind game
+  = renderGame game (textScore game) "By Jarmo van Lenthe en Tinco Andringa"
+           
+renderGame game statusText instructionText
   = new_game & 
     {graphics= GraphClear :
                graphics ++ [
-                 GraphText white (-0.99,0.99) (makeStatus new_game) ,
-                 GraphText white (-0.99, -0.95) "Press 'r' to resign. Press 'p' to pass."
+                 GraphText white (-0.99,0.99) statusText ,
+                 GraphText white (-0.99, -0.95) instructionText
                  ]}
                || Clear de graphics voor iedere render.
     where
       new_game = renderBord game
       {graphics=graphics, bord=bord} = new_game
 
-makeStatus game = "Turn: " ++ (textPlayer speler) ++ " " ++
-                  "Scores: Black " ++ (ftoa s_b) ++ " - White " ++ (ftoa s_w)
+makeStatus game = (textTurn game) ++ (textScore game)
+                    
+textScore game =  "Scores: Black " ++ (ftoa s_b) ++ " - White " ++ (ftoa s_w)
                 where
-                  {speler=speler, score=score} = game
+                  {score=score} = game
                   (s_b, s_w) = score
+                    
+textTurn game = "Turn: " ++ (textPlayer speler) ++ " "
+                where
+                  {speler=speler} = game
+                  
 
 textPlayer White = "White"
 textPlayer Black = "Black"
