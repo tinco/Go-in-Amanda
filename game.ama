@@ -24,9 +24,11 @@ gameFSA :: gameStateTp -> gameStateTp
 gameFSA (Begin, game, events) = (Begin2, newGame, rest)
                               where
                                 (newGame, rest) = (executeBegin game events)
-gameFSA (Begin2, game, events) = (Turn, newGame, rest)
+gameFSA (Begin2, game, events) = (Turn, newGame, rest) , if (#bord > 0)
+                               = (Begin, newGame, rest) , otherwise
                                where
                                 (newGame, rest) = (executeBegin2 game events)
+                                {bord=bord} = newGame
 gameFSA (Turn, game, events) = (newState, newGame, rest)
                              where
                               (newGame, rest) = executeTurn game events
@@ -51,7 +53,6 @@ executeBegin game events = (new_game , events)
                          where
                            {graphics=graphics}=game
                            new_game = game & {graphics = GraphPrompt "Bord size" "Bord size?" : graphics}
-                      
 
 executeBegin2 game events = (new_game, rest)
                           where

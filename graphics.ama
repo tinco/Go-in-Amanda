@@ -10,7 +10,13 @@ tekenBord bord = background : goban : lijnen ++ stenen
     goban_s = goban_spacing bord_size
     goban = GraphRectangle lightgrey (hd goban_s, hd goban_s) (last goban_s, last goban_s)
     lijnen = map (l->GraphPolyLine black l) (lineCoords bord_size)
-    stenen = map (((x, y), k)->GraphDisc (spelerKleur k) x y) (stoneCoords bord)
+    stenen = map ((position, kleur)->drawStone bord kleur position) (stoneCoords bord)
+      
+drawStone bord kleur position
+  = GraphDisc (spelerKleur kleur) x y
+  where
+    bord_size = #bord
+    (x,y) = discPosition bord_size position
       
 renderBord game
   = new_game
@@ -22,7 +28,18 @@ renderScore game
   = renderGame game ("Scoring - " ++ (textScore game)) "Press 'd' when you are done marking groups as dead."
     
 renderTurn game
-  = renderGame game (makeStatus game) "Press 'r' to resign. Press 'p' to pass."
+  = renderGame game (makeStatus game) "Press 'r' to resign. Press 'p' to pass. Press 'l' to show liberties on the next move."
+    
+renderLiberties game
+  = game & {graphics=new_graphics} , if l
+  = game , otherwise
+  where
+    {bord=bord, graphics=graphics, liberties=l} = game
+    coords = [ p |(p,c) <- stoneCoords bord ]
+    positions = [p | (p,c) <- getStones bord ]
+    liberties = map (posLiberties bord) positions
+    c_l = zip (coords, map (#) liberties)
+    new_graphics = graphics ++ (map ((p, l)-> GraphText red p (itoa l)) c_l)
     
 renderEind game
   = renderGame game (textScore game) "By Jarmo van Lenthe en Tinco Andringa"
@@ -36,7 +53,7 @@ renderGame game statusText instructionText
                  ]}
                || Clear de graphics voor iedere render.
     where
-      new_game = renderBord game
+      new_game = renderLiberties (renderBord game)
       {graphics=graphics, bord=bord} = new_game
 
 makeStatus game = (textTurn game) ++ (textScore game)
@@ -69,7 +86,7 @@ lineCoords n
     horizs = zipwith (toline) horiz_begins horiz_ends
 
 || Geeft de posities voor de stenen. Op het bord. 
-stoneCoords :: goBordTp -> [((posTp,posTp),spelerTp)]      
+stoneCoords :: goBordTp -> [(posTp,spelerTp)]      
 stoneCoords bord
   = stenen
   where
@@ -78,7 +95,7 @@ stoneCoords bord
     || Dit is redelijk sexy:
     positions = concat (zipwith (rij->space_x->
                  (zipwith (steen->space_y->
-                   (discPosition bord_size (space_x, space_y), steen)
+                   ((space_x, space_y), steen)
                   ) rij (reverse spacing) ) || Spiegelen in de y-as
                 ) bord spacing )
     stenen = filter ((_,c)-> c ~= None) positions

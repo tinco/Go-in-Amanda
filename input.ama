@@ -59,6 +59,11 @@ handleTurn game (KeyIn 'p' : es)
   = (game & {pass=pass + 1}, es)
     where
       {pass=pass} = game
+        
+handleTurn game (KeyIn 'l' : es)
+  = handleTurn (game & {liberties = ~liberties}) es
+  where
+      {liberties=liberties} = game
       
 handleTurn game (e : es)
   = handleTurn game es

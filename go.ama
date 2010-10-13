@@ -17,6 +17,7 @@ gameTp ::= { bord :: goBordTp ,
              score :: scoreTp,
              winnaar :: winnaarTp,
              pass :: num,
+             liberties :: bool,
              graphics :: [graphics] }
 
 newGameState komi bord_size
@@ -26,6 +27,7 @@ newGameState komi bord_size
                  score = (0, komi) ,
                  winnaar = None ,
                  pass = 0 ,
+                 liberties = False,
                  graphics = [] }
 
 || Run go
