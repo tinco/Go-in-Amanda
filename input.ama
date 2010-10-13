@@ -1,28 +1,4 @@
 || Input
-
-||handleInput game (KeyIn 'n' : es) || New game
-||  = (tekenBord bord) ++ handleInput game es
-||  where
-||    {bord=bord}=game
-||
-||handleInput game (MouseUp(x,y) : es) ||Turn
-||  = (tekenBord new_bord) ++ handleInput new_game es
-||  where
-||    {bord=bord}=game
-||    on_stone = onStone bord (x,y)
-||    Just (position) = on_stone
-||    new_bord = setPosition bord White position , if on_stone ~= Nothing
-||             = bord , otherwise 
-||    new_game = game & {bord=new_bord}
-||
-||handleInput gameTp (KeyIn 'p' : es) ||Pass
-||  = handleInput gameTp es || Ook nog beurt naar de volgende
-||
-|||| Functies voor het functioneren van de app. Deze moeten altijd als laatste.
-||handleInput gameTp (KeyIn '\e' : es) = [] || Stop.
-||  
-|||| Handel alle overige inputevents af door er niks mee te doen en verder te gaan met de volgende.
-||handleInput gameTp ( e : es) = handleInput gameTp es
   
 || Turn
 || A stone may not be placed upon another stone.

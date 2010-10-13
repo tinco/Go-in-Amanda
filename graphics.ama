@@ -10,10 +10,11 @@ tekenBord bord = background : goban : lijnen ++ stenen
     goban_s = goban_spacing bord_size
     goban = GraphRectangle lightgrey (hd goban_s, hd goban_s) (last goban_s, last goban_s)
     lijnen = map (l->GraphPolyLine black l) (lineCoords bord_size)
-    stenen = map ((position, kleur)->drawStone bord kleur position) (stoneCoords bord)
+    stenen = concat (map ((position, kleur)->drawStone bord kleur position) (stoneCoords bord))
       
 drawStone bord kleur position
-  = GraphDisc (spelerKleur kleur) x y
+  = [ GraphDisc (spelerKleur kleur) x y , 
+      GraphEllipse (spelerKleur (nextPlayer kleur)) x y ]
   where
     bord_size = #bord
     (x,y) = discPosition bord_size position
