@@ -84,4 +84,15 @@ handleScore game (MouseUp(x,y):es)
                 
     new_game = game & {bord=new_bord, score = new_score}
 
+handleScore game (KeyIn 'd' : es)
+  = (game & {score=(b_t,w_t), winnaar=winnaar}, es)
+  where
+    {bord=bord, score=score} = game
+    (b_s, w_s) = score
+    territories = getTerritories bord
+    ter_score = k -> sum (map (#) (filter (t-> (getOwner bord t) = k) territories))
+    (b_t,w_t) = (b_s + (ter_score Black), w_s + (ter_score White))
+    winnaar = Black , if b_t > w_t
+            = White , otherwise
+    
 handleScore game (e:es) = handleScore game es
